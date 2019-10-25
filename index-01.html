@@ -59,7 +59,7 @@
                         
                       </ul>
                     </div>
-                <div id="array"> </div>
+                <!-- <div id="array"> </div> -->
             </div>            
 
 <!-- Page content -->
@@ -103,7 +103,7 @@
     <script text="text/javascript">
 
 $(document).ready(function() {
-    /* var addCities = []; */
+    
 
     $("#searchBtn").on("click",
         function() { 
@@ -151,26 +151,9 @@ $(document).ready(function() {
             }
         });
         // ------------------------------------------------------------------------
-        // console.log("test");
-        // console.log(localStorage);  
-
-       /*  var addCity = {
-            id: date.now(),
-            cityName: $("#search").val()
-        }
-        addCities.push(addCity);
-        // document.form[0].rest();
-        // document.querySelector('form').reset();
-
-        // console.warn('added', {cities});
-         let pre = document.querySelector("#array pre");
-        pre.textContent = '\n' + JSON.stringify(cities, '\t', 2);
-
-        $("#array").html({addCities}); */
-
-        // ------------------------------------------------------------------------
         
-       /*  var search = $("#search");
+        
+        var search = $("#search");
         // var searchBtn = $("#searchBtn");
         var outPut = $("#outPut");
         
@@ -184,7 +167,7 @@ $(document).ready(function() {
             var key = localStorage.key(i);
             var value = localStorage.getItem(key);
 
-            $(outPut).append(key); */
+            $(outPut).append(key); 
         }
 
     });   
