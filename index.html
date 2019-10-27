@@ -54,12 +54,12 @@
                         <button class="btn btn-primary my-2 my-sm-0" type="submit" id="searchBtn">Search</button>
                 </form>   
                 <div class="card" style="width: 8rem;">
-                      <ul class="list-group list-group-flush">
-                        <li class="list-group-item" id="outPut"></li>
+
+                      <ul id="buttonList" class="list-group list-group-flush">
                         
                       </ul>
                     </div>
-                <div id="array"> </div>
+                <!-- <div id="array"> </div> -->
             </div>            
 
 <!-- Page content -->
@@ -79,20 +79,8 @@
 
                     <h4>5-Day Forecast:</h4>
                     <div class="fiveBox"></div>
-<!--                     <div class="col-md-3">
-                    <div class="card text-white bg-primary mb-3" style="max-width: 16rem;">
-                        <div class="card-header" id="date"><h5>Date</h5></div>
-                        <div class="card-body">
-                          <h5 class="card-title" id="icon">icon</h5>
-                          <p class="card-text">Temp:  <span id="tempCard"></span></p>
-                          <p class="card-text">Humidity:  <span id="humidityCard"></span></p>
-                        </div>
-                      </div>
-                    </div> -->
 
-             </div>
-
-            
+             </div>            
         </div>
     </div>
 
@@ -103,39 +91,66 @@
     <script text="text/javascript">
 
 $(document).ready(function() {
-    /* var addCities = []; */
 
-    $("#searchBtn").on("click",
-        function() { 
+    makeButtons();
+
+    var APIKey = "9cb57c03913866531529917ca50d9aef";
+
+    $("#searchBtn").on("click", function() { 
         event.preventDefault();
-        
+
+        //city 는 입력하는 데이타의 값이다.
+        var city = $('#search').val();
+
+        saveHistory(city);
+
+        getWeather(city);
+    });
+
+    // 1. function : 날씨정보를 가져오는 것
+    function getWeather(city) {
+
         // 아이디 자리에 입력된 value로 뭘 찾을것이다
-        var city = $("#search").val();
+        // var city = $("#search").val();
         // console.log(city);
-        
-        // 키와 주소를 준다
-        var APIKey = "9cb57c03913866531529917ca50d9aef";
-        var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey;
+
+        // 키와 주소를 준다            
+        var queryURL1 = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey;
 
         // 가져오라고 명령한다.
         $.ajax({
-            url: queryURL,
+            url: queryURL1,
             method: "GET"
-            
-        // 그리고는 가져오는 답으로 뭘 할것이다.            
+
+        // 그리고는 답을 가져온다.            
         }).then(function(response) {
+            console.log(response);
             // console.log("test");            
             //  $("#temp").text(JSON.stringify(response));
-            console.log(response);
+            //console.log(response);
+            // updateWeather(response);
 
-            $("#city").html("<h2>" + response.city.name +"   ("+ response.list[0].dt_txt + ")" + "</h2>");
-            $("#temp").html(response.list[0].main.temp + " °F");
-            $("#humidity").html(response.list[0].main.humidity + " %");
-            $("#wind").html(response.list[0].wind.speed + " MPH");
-            // $("#uv").html(response.wind.speed);
-            
+        // UV 데이타를 가져와야 하니까... 설정을 먼저 하자
+        var lat = response.city.coord.lat;
+        var lon = response.city.coord.lon;
+
+        // 따로 불러오는 UV 데이타를 불러오자
+        getUVIndex(lat,lon);
+        updateWeather(response);
+        
+        });
+    };
+    
+    function updateWeather(response) {
+        $("#city").html("<h2>" + response.city.name +"   ("+ response.list[0].dt_txt + ")" + "</h2>");
+        $("#temp").html(response.list[0].main.temp + " °F");
+        $("#humidity").html(response.list[0].main.humidity + " %");
+        $("#wind").html(response.list[0].wind.speed + " MPH");     
+        
+        $(".fiveBox").empty();
+
         for(var i = 1; i < 6 ; i++) {
-            var date = moment().add(i+1, 'days').format("M/D/YYYY");
+            var date = moment().add(i + 1, 'days').format("M/D/YYYY");
             
             $("<div>", {
                 html: "<h3>" + date + "</h3>" + "<br>" +
@@ -143,54 +158,90 @@ $(document).ready(function() {
                       "Humidity: " + response.list[i].main.humidity + " %",
                 id: "fiveBoxCss",
                 appendTo: ".fiveBox"       
-                })
-                
-            // $("#date").html("<h5>" + response.list[i].dt_txt + "</h5>");
-            // $("#tempCard").html(response.list[i].main.temp + " (f)");
-            // $("#humidityCard").html(response.list[i].main.humidity + " %");            
-            }
+            });           
+        }   
+    };
+    
+    function getUVIndex(lat, lon) {
+        var queryURL2 = "http://api.openweathermap.org/data/2.5/uvi?appid=" + APIKey + "&lat=" + lat + "&lon=" + lon;
+        $.ajax({
+            url: queryURL2,
+            method: "GET"                
+        }).then(function(response) {
+            updateUVIndex(response);
         });
-        // ------------------------------------------------------------------------
-        // console.log("test");
-        // console.log(localStorage);  
+    };
+        
+    function updateUVIndex(response) {
+        $("#uv").html(response.value);
+    };
 
-       /*  var addCity = {
-            id: date.now(),
-            cityName: $("#search").val()
+    // -------------------------------------------------------------------
+
+    function saveHistory(city) { 
+        // 만약 searchHistory 라는 키로 데이타가 있으면
+        if (localStorage.getItem("searchHistory")) {
+            // 그 무엇(데이타)가 history 라는 이름으로 저장된다. pull it 
+            var history = JSON.parse(localStorage.getItem("searchHistory")); 
+            // 시티를 히스토리 에 더한다. add it 
+            history.push(city);
+            // 그리고 더해진 히스토리를 searchHistory 라는데에 저장한다 save it 
+            localStorage.setItem("searchHistory", JSON.stringify(history));
+        } else {
+            // 그렇지 않으면 city 라는 어레이에 저장한다.
+            localStorage.setItem("searchHistory", JSON.stringify([city]));
+        }   
+        makeButtons();     
+    };
+
+    function makeButtons() {
+        // if 로컬스토리지 안에 뭐가 있으면, 만약에 key 안에 뭐가 있으면, 그걸 키로 볼수 있으니까.
+        // 그리고는 그 어레이 안에 있는 밸류를 끌어다 쓸수 있다.
+        if (localStorage.getItem("searchHistory")) {
+
+            // 그것을 cityList 라는 이름으로 저장해야 한다. 모든 어레이를. 키에 있는 데이터를 스트링으로 분해해서
+            var cityList = JSON.parse(localStorage.getItem("searchHistory"));
+
+            //어레이 안을 loop 을 해서 버튼안에 나타나게 해야함
+            for (var i = 0; i < cityList.length; i++) {
+                // 버튼 만들고 텍스트 넣어야 함
+                // 버튼을 어이다 붙여야 함
+                var listItem = $("<li>");
+                var button = $("<button>").text(cityList[i]); 
+                button.addClass("cityButton");             
+
+                listItem.append(button);
+
+                $("#buttonList").append(listItem);
+            }
         }
-        addCities.push(addCity);
-        // document.form[0].rest();
-        // document.querySelector('form').reset();
+    };
 
-        // console.warn('added', {cities});
-         let pre = document.querySelector("#array pre");
-        pre.textContent = '\n' + JSON.stringify(cities, '\t', 2);
-
-        $("#array").html({addCities}); */
-
+    $(".cityButton").click(function(){
+        var city = $(this).text();
+        getWeather(city);
+    })
         // ------------------------------------------------------------------------
         
-       /*  var search = $("#search");
-        // var searchBtn = $("#searchBtn");
-        var outPut = $("#outPut");
         
-        var key = search.val();
-        var value = search.val();
+        // var search = $("#search");
+        // // var searchBtn = $("#searchBtn");
+        
+        // var outPut = $("#outPut");
+        
+        // var key = search.val();
+        // var value = search.val();
 
-        localStorage.setItem(key,value);
-        // location.reload();
+        // localStorage.setItem(key,value);
+        // // location.reload();
 
-        for (var i= 0; i < localStorage.length; i++) {
-            var key = localStorage.key(i);
-            var value = localStorage.getItem(key);
+        // for (var i= 0; i < localStorage.length; i++) {
+        //     var key = localStorage.key(i);
+        //     var value = localStorage.getItem(key);
 
-            $(outPut).append(key); */
-        }
+        //     $(outPut).append(key); 
+        // }
 
-    });   
-
-       
-   
 });
 
 //     $.getJSON("http://openweathermap.org/data/2.5/weather?q=London,uk&APPID=9cb57c03913866531529917ca50d9aef", function(data){
