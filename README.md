@@ -8,3 +8,6 @@
 
 3. 5day cards show up.
 <img src="capture/20191023_202553-4.png" width="60%" height="60%">
+
+4. Local Storage part done.
+<img src="capture/20191026_215335_005.png" width="60%" height="60%">
