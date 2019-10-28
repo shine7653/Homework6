@@ -77,13 +77,14 @@
                             </div>
                     </div>                
 
-                    <h4>5-Day Forecast:</h4>
+                    <h3>5-Day Forecast:</h3>
                     <div class="fiveBox"></div>
 
              </div>            
         </div>
     </div>
 
+    <script src="https://use.fontawesome.com/releases/v5.11.2/js/all.js" data-auto-replace-svg="nest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -137,34 +138,73 @@ $(document).ready(function() {
         // 따로 불러오는 UV 데이타를 불러오자
         getUVIndex(lat,lon);
         updateWeather(response);
-        
         });
     };
     
-    function updateWeather(response) {
-        
+    function updateWeather(response) {        
+
         $("#city").html("<h2>" + response.city.name +"   ("+ response.list[0].dt_txt + ")" + "</h2>");
-        $("#weather").html(response.list[0].weather[0].main);
-        $("#weather").append('<img id="weather" src="Assets/wCloudy.png" "width:30px; height:50px;">');                 
+        $("#weather").html(response.list[0].weather[0].main + "    ");
+
+        var icon = $("<i>");
+        var weatherIcon = response.list[0].weather[0].main;
+                  
+            if (weatherIcon === "Clear") { 
+                icon.addClass("fas fa-sun");
+            } else if (weatherIcon === "Clouds") {
+                icon.addClass("fas fa-cloud");
+            } else if (weatherIcon === "Snow") {    
+                icon.addClass("fas fa-snowflake");
+            } else if (weatherIcon === "Drizzle") {
+                icon.addClass("fas fa-cloud-drizzle");
+            } else if (weatherIcon === "Rain") {
+                icon.addClass("fas fa-cloud-showers-heavy");
+            }
+        $("#weather").append(icon);
+
         $("#temp").html(response.list[0].main.temp + " °F");
         $("#humidity").html(response.list[0].main.humidity + " %");
-        $("#wind").html(response.list[0].wind.speed + " MPH");     
-        
+        $("#wind").html(response.list[0].wind.speed + " MPH");  
+
+    //-------------------------------------------------------------    
         $(".fiveBox").empty();
 
         for(var i = 1; i < 6 ; i++) {
             var date = moment().add(i + 1, 'days').format("M/D/YYYY");
             
-            $("<div>", {
+            var fiveDiv = $("<div id='fiveDBoxCss'>");
+                var fiveDate = $("<h4>");
+                    fiveDate.html(date);
+                var icon = $("<i>"); 
+                var fiveTemp = $("<span>");
+                    fiveTemp.html("Temp: " + response.list[i].main.temp + " °F" + "<br>");
+                var fiveHumidity = $("<span>");
+                    fiveHumidity.html("Temp: " + response.list[i].main.humidity + " %" + "<br>");
+                // $("<div>", {
+                //     html: "<h3>" + date + "</h3>" + "<br>" +
+                //         "Weather : " + response.list[0].weather[0].main + "<br>" +
+                //         "Temp : " + response.list[i].main.temp + " °F" + "<br>" +
+                //         "Humidity : " + response.list[i].main.humidity + " %"
+                // });
+                // $("<div>", {id: "iconPlace"});
 
-                html: "<h3>" + date + "</h3>" + "<br>" +
-                      "Weather : " + response.list[0].weather[0].main + "<br>" +
-                      "Temp : " + response.list[i].main.temp + " °F" + "<br>" +
-                      "Humidity : " + response.list[i].main.humidity + " %",
-
-                id: "fiveBoxCss",
-                appendTo: ".fiveBox"       
-            });           
+            fiveDiv.append(fiveDate, icon, fiveTemp, fiveHumidity);
+            $(".fiveBox").append(fiveDiv);                        
+                        
+            var weatherIcon = response.list[0].weather[0].main;                       
+            
+            if (weatherIcon === "Clear") { 
+                    icon.addClass("fas fa-sun");
+                } else if (weatherIcon === "Clouds") {
+                    icon.addClass("fas fa-cloud");
+                } else if (weatherIcon === "Snow") {    
+                    icon.addClass("fas fa-snowflake");
+                } else if (weatherIcon === "Drizzle") {
+                    icon.addClass("fas fa-cloud-drizzle");
+                } else if (weatherIcon === "Rain") {
+                    icon.addClass("fas fa-cloud-showers-heavy");
+                }
+            $("#iconPlace").append(icon);           
         }   
     };
     
@@ -182,10 +222,7 @@ $(document).ready(function() {
     function updateUVIndex(uvResponse) {
         $("#uv").html(uvResponse.value);
     };
-
-    /* function getUVIndex(lat, lon) {
-
-    } */;   
+;   
     // -------------------------------------------------------------------
 
     function saveHistory(city) { 
