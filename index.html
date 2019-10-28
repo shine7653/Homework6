@@ -68,7 +68,7 @@
                     <div class="card">
                             <h3 class="card-header" id="city">City : </h3>
                             <div class="card-body">
-                              <!-- <h5 class="card-title">Special title treatment</h5> -->
+                              <p class="card-text"><b>Weather :  </b><span id="weather"></span> </p>
                               <p class="card-text"><b>Temperature :  </b><span id="temp"></span> </p>
                               <p class="card-text"><b>Humidity :  </b><span id="humidity"></span></p>
                               <p class="card-text"><b>Wind Speed :  </b><span id="wind"></span> </p>
@@ -107,7 +107,7 @@ $(document).ready(function() {
         getWeather(city);
     });
 
-    // 1. function : 날씨정보를 가져오는 것
+    // 날씨정보를 가져오자.
     function getWeather(city) {
 
         // 아이디 자리에 입력된 value로 뭘 찾을것이다
@@ -142,7 +142,10 @@ $(document).ready(function() {
     };
     
     function updateWeather(response) {
+        
         $("#city").html("<h2>" + response.city.name +"   ("+ response.list[0].dt_txt + ")" + "</h2>");
+        $("#weather").html(response.list[0].weather[0].main);
+        $("#weather").append('<img id="weather" src="Assets/wCloudy.png" "width:30px; height:50px;">');                 
         $("#temp").html(response.list[0].main.temp + " °F");
         $("#humidity").html(response.list[0].main.humidity + " %");
         $("#wind").html(response.list[0].wind.speed + " MPH");     
@@ -153,9 +156,12 @@ $(document).ready(function() {
             var date = moment().add(i + 1, 'days').format("M/D/YYYY");
             
             $("<div>", {
+
                 html: "<h3>" + date + "</h3>" + "<br>" +
-                      "Temp: " + response.list[i].main.temp + " °F" + "<br>" +
-                      "Humidity: " + response.list[i].main.humidity + " %",
+                      "Weather : " + response.list[0].weather[0].main + "<br>" +
+                      "Temp : " + response.list[i].main.temp + " °F" + "<br>" +
+                      "Humidity : " + response.list[i].main.humidity + " %",
+
                 id: "fiveBoxCss",
                 appendTo: ".fiveBox"       
             });           
@@ -167,15 +173,19 @@ $(document).ready(function() {
         $.ajax({
             url: queryURL2,
             method: "GET"                
-        }).then(function(response) {
-            updateUVIndex(response);
+        }).then(function(uvResponse) {
+            console.log(uvResponse);
+            updateUVIndex(uvResponse);
         });
     };
         
-    function updateUVIndex(response) {
-        $("#uv").html(response.value);
+    function updateUVIndex(uvResponse) {
+        $("#uv").html(uvResponse.value);
     };
 
+    /* function getUVIndex(lat, lon) {
+
+    } */;   
     // -------------------------------------------------------------------
 
     function saveHistory(city) { 
