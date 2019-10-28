@@ -14,3 +14,6 @@
 
 5. A cloud picture is uploaded
 <img src="capture/20191027_182939.png" width="60%" height="60%">
+
+6. Icons are uploaded, but the blue boxes are.............screwed up
+<img src="capture/20191027_235546.png" width="60%" height="60%">
