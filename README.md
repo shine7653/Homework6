@@ -11,3 +11,6 @@
 
 4. Local Storage part done.
 <img src="capture/20191026_215335_005.png" width="60%" height="60%">
+
+5. A cloud picture is uploaded
+<img src="capture/20191027_182939.png" width="60%" height="60%">
