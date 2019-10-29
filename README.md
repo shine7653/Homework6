@@ -17,3 +17,7 @@
 
 6. Icons are uploaded, but the blue boxes are.............screwed up
 <img src="capture/20191027_235546.png" width="60%" height="60%">
+
+7. Blue boxes are fixed
+<img src="capture/20191028_182927.png" width="60%" height="60%">
+
