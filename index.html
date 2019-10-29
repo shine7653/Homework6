@@ -172,14 +172,15 @@ $(document).ready(function() {
         for(var i = 1; i < 6 ; i++) {
             var date = moment().add(i + 1, 'days').format("M/D/YYYY");
             
-            var fiveDiv = $("<div id='fiveDBoxCss'>");
+            var fiveDiv = $("<div id='fiveBoxCss'>");
                 var fiveDate = $("<h4>");
                     fiveDate.html(date);
                 var icon = $("<i>"); 
+                    // $("<div>", {id: "iconPlace"});
                 var fiveTemp = $("<span>");
                     fiveTemp.html("Temp: " + response.list[i].main.temp + " °F" + "<br>");
                 var fiveHumidity = $("<span>");
-                    fiveHumidity.html("Temp: " + response.list[i].main.humidity + " %" + "<br>");
+                    fiveHumidity.html("Humidity: " + response.list[i].main.humidity + " %" + "<br>");
                 // $("<div>", {
                 //     html: "<h3>" + date + "</h3>" + "<br>" +
                 //         "Weather : " + response.list[0].weather[0].main + "<br>" +
@@ -222,7 +223,7 @@ $(document).ready(function() {
     function updateUVIndex(uvResponse) {
         $("#uv").html(uvResponse.value);
     };
-;   
+  
     // -------------------------------------------------------------------
 
     function saveHistory(city) { 
